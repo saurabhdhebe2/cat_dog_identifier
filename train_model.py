@@ -4,11 +4,9 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers, models
 from validate_images import verify_images
 
-# Paths to the dataset
 train_dir = 'data/train'
 val_dir = 'data/val'
 
-# Verify images before training
 cat_dir = 'data/train/cats'
 dog_dir = 'data/train/dogs'
 
@@ -16,12 +14,10 @@ print("Verifying images in cat and dog directories...")
 verify_images(cat_dir)
 verify_images(dog_dir)
 
-# Data preprocessing and augmentation
 IMAGE_SIZE = (150, 150)
 BATCH_SIZE = 32
 EPOCHS = 10
 
-# Data generators
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     rotation_range=40,
@@ -34,7 +30,6 @@ train_datagen = ImageDataGenerator(
 
 val_datagen = ImageDataGenerator(rescale=1./255)
 
-# Load train and validation data from directory
 train_generator = train_datagen.flow_from_directory(
     train_dir,
     target_size=IMAGE_SIZE,
@@ -49,7 +44,6 @@ val_generator = val_datagen.flow_from_directory(
     class_mode='binary'
 )
 
-# Build CNN model
 model = models.Sequential([
     layers.Conv2D(32, (3, 3), activation='relu', input_shape=(*IMAGE_SIZE, 3)),
     layers.MaxPooling2D((2, 2)),
@@ -64,14 +58,12 @@ model = models.Sequential([
     layers.Dense(1, activation='sigmoid')  # Binary classification
 ])
 
-# Compile the model
 model.compile(
     loss='binary_crossentropy',
     optimizer='adam',
     metrics=['accuracy']
 )
 
-# Train the model
 history = model.fit(
     train_generator,
     steps_per_epoch=train_generator.samples // BATCH_SIZE,
@@ -80,7 +72,6 @@ history = model.fit(
     validation_steps=val_generator.samples // BATCH_SIZE
 )
 
-# Save the model
 if not os.path.exists('models'):
     os.makedirs('models')
 model.save('models/cat_dog_classifier.h5')
