@@ -4,6 +4,21 @@ from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers, models
 from validate_images import verify_images
 
+# print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices('GPU')))
+
+# # Check GPU availability
+# gpus = tf.config.experimental.list_physical_devices('GPU')
+# if gpus:
+#     try:
+#         for gpu in gpus:
+#             tf.config.experimental.set_memory_growth(gpu, True)
+#         print(f"Using {len(gpus)} GPU(s)")
+#     except RuntimeError as e:
+#         print(e)
+# else:
+#     print("No GPU found, using CPU.")
+
+
 train_dir = 'data/train'
 val_dir = 'data/val'
 
@@ -14,9 +29,9 @@ print("Verifying images in cat and dog directories...")
 verify_images(cat_dir)
 verify_images(dog_dir)
 
-IMAGE_SIZE = (150, 150)
+IMAGE_SIZE = (256, 256)
 BATCH_SIZE = 32
-EPOCHS = 10
+EPOCHS = 20
 
 train_datagen = ImageDataGenerator(
     rescale=1./255,
@@ -55,7 +70,7 @@ model = models.Sequential([
     layers.MaxPooling2D((2, 2)),
     layers.Flatten(),
     layers.Dense(512, activation='relu'),
-    layers.Dense(1, activation='sigmoid')  # Binary classification
+    layers.Dense(1, activation='sigmoid') 
 ])
 
 model.compile(
